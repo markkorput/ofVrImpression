@@ -1,0 +1,8 @@
+<ofVrImpression>
+	<version>0.0.0</version>
+	<log-file/>
+	<log-level/>
+	<params-file>params.xml</params-file>
+	<texture-path>data/texture.jpg</texture-path>
+<ofVrImpression/>
+</ofVrImpression>
