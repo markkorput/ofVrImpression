@@ -3,6 +3,6 @@
 	<log-file/>
 	<log-level/>
 	<params-file>params.xml</params-file>
-	<texture-path>data/texture.jpg</texture-path>
+	<texture-path>sailboat.jpg</texture-path>
 <ofVrImpression/>
 </ofVrImpression>

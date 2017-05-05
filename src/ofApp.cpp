@@ -1,26 +1,4 @@
-//--------------------------------------------------------------
-// ofApp.h
-//--------------------------------------------------------------
-
-#include "ofMain.h"
-#include "ofxBootstrApp.h"
-
-class ofApp : public ofxBootstrApp::App {
-
-public:
-    void setup();
-    void setupParameters();
-    void update();
-    void draw();
-
-private:
-    ofParameter<string> texturePathParam;
-};
-
-
-//--------------------------------------------------------------
-// ofApp.cpp
-//--------------------------------------------------------------
+#include "ofApp.h"
 
 void ofApp::setup(){
     // ofxBootstrApp::App's setup method takes care of;
@@ -29,6 +7,19 @@ void ofApp::setup(){
     // - redirecting loggings output according to parameter configuration
     // - sets log level based on ofxBootstrApp::App::logLevelParam
     ofxBootstrApp::App::setup();
+
+    ofSetVerticalSync(true);
+    ofSetFrameRate(60);
+
+    ofSpherePrimitive p = ofSpherePrimitive(100.0,60);
+    sphereMesh = p.getMesh();
+
+    if(texturePathParam.get() != ""){
+        ofLog() << "loading image: " << texturePathParam.get();
+        image.load(texturePathParam.get());
+    }
+
+    updateMeshForTexture(image.getTexture());
 
     ofSetWindowTitle("ofVrImpression - " + versionParam.get());
 }
@@ -40,9 +31,28 @@ void ofApp::setupParameters(){
 }
 
 void ofApp::update(){
+
 }
 
 void ofApp::draw(){
+    ofClear(0);
+
+    cam.begin();
+    image.getTexture().bind();
+    sphereMesh.draw();
+    image.getTexture().unbind();
+    cam.end();
+
+    ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 10);
+}
+
+void ofApp::updateMeshForTexture(ofTexture &texture){
+    for(int i=0; i<sphereMesh.getNumVertices(); i++){
+        ofVec2f texCoord = sphereMesh.getTexCoord(i);
+        texCoord.x *= texture.getWidth();
+        texCoord.y  = (1.0 - texCoord.y) * texture.getHeight();
+        sphereMesh.setTexCoord(i, texCoord);
+    }
 }
 
 //--------------------------------------------------------------
