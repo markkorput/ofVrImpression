@@ -14,12 +14,8 @@ void ofApp::setup(){
     ofSpherePrimitive p = ofSpherePrimitive(100.0,60);
     sphereMesh = p.getMesh();
 
-    if(texturePathParam.get() != ""){
-        ofLog() << "loading image: " << texturePathParam.get();
-        image.load(texturePathParam.get());
-    }
-
-    updateMeshForTexture(image.getTexture());
+    if(imagePathParam.get() != "")
+        loadImage(imagePathParam.get());
 
     ofSetWindowTitle("ofVrImpression - " + versionParam.get());
 }
@@ -27,23 +23,47 @@ void ofApp::setup(){
 void ofApp::setupParameters(){
     ofxBootstrApp::App::setupParameters();
     parameters.setName("ofVrImpression");
-    parameters.add(texturePathParam.set("texture-path", "data/texture.jpg"));
+    parameters.add(imagePathParam.set("texture-path", "data/texture.jpg"));
 }
 
 void ofApp::update(){
-
+    cam.setPosition(0,0,0);
 }
 
 void ofApp::draw(){
     ofClear(0);
 
     cam.begin();
-    image.getTexture().bind();
-    sphereMesh.draw();
-    image.getTexture().unbind();
+    if(texture){
+        ofSetColor(255);
+        texture->bind();
+        sphereMesh.draw();
+        texture->unbind();
+    } else {
+        ofSetColor(255,0,0);
+        sphereMesh.drawWireframe();
+    }
     cam.end();
 
     ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 10);
+}
+
+void ofApp::dragEvent(ofDragInfo dragInfo){
+    for(auto file: dragInfo.files){
+        imagePathParam.set(file);
+        loadImage(file);
+    }
+}
+
+bool ofApp::loadImage(const string& path){
+    ofLog() << "loading image: " << path;
+
+    if(!image.load(path))
+        return false;
+
+    texture = &image.getTexture();
+    updateMeshForTexture(image.getTexture());
+    return true;
 }
 
 void ofApp::updateMeshForTexture(ofTexture &texture){
