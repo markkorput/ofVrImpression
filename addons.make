@@ -1,4 +1,2 @@
 ofxBootstrApp
 ofxOperations
-ofxCubeMap
-ofxEquiMap
