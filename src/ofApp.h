@@ -13,16 +13,17 @@ public:
     void dragEvent(ofDragInfo dragInfo);
 
 private:
-    // loads the specified image and makes sure sphere mesh gets updated if necessary
+    //! loads the specified image and makes sure sphereMesh gets updated if necessary
     bool loadImage(const string& path);
-    //! changes the texcoords of all vertices in our sphere mesh to match with the given texture's dimensions
-    void updateMeshForTexture(ofTexture &texture);
+
+    //! changes the texcoords of all vertices in the mesh to match with the given texture's dimensions
+    static void normalizeMeshTexCoord(ofMesh &mesh, const ofVec2f &textureDimensions, bool normalize=false);
 
 private:
     ofParameter<string> imagePathParam;
 
     ofImage image;
-    ofTexture* texture;;
+    ofTexture* texture;
     ofMesh sphereMesh;
     // ofCamera cam;
     ofEasyCam cam;

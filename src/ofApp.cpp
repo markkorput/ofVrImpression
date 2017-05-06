@@ -57,21 +57,55 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 bool ofApp::loadImage(const string& path){
     ofLog() << "loading image: " << path;
+    bool bPrevious = false;
+    ofVec2f previousDimensions;
 
-    if(!image.load(path))
+    // remember dimensions of previous image for normalization if a new image gets loaded
+    if(image.isAllocated()){
+        bPrevious = true;
+        previousDimensions.set(image.getWidth(), image.getHeight());
+    }
+
+    // try to load specified image
+    if(!image.load(path)){
+        ofLogWarning() << "failed to load image: " << path;
         return false;
+    }
 
+    if(bPrevious){
+        // normalize; undo denormalization for previous image's texture
+        normalizeMeshTexCoord(sphereMesh, previousDimensions, true);
+    }
+
+    // denormalize for the new image dimensions (the default shader needs denormalized texcoords)
+    normalizeMeshTexCoord(sphereMesh, ofVec2f(image.getWidth(), image.getHeight()));
+
+    // point our main texture to the loaded image's texture
     texture = &image.getTexture();
-    updateMeshForTexture(image.getTexture());
     return true;
 }
 
-void ofApp::updateMeshForTexture(ofTexture &texture){
-    for(int i=0; i<sphereMesh.getNumVertices(); i++){
-        ofVec2f texCoord = sphereMesh.getTexCoord(i);
-        texCoord.x *= texture.getWidth();
-        texCoord.y  = (1.0 - texCoord.y) * texture.getHeight();
-        sphereMesh.setTexCoord(i, texCoord);
+void ofApp::normalizeMeshTexCoord(ofMesh &mesh, const ofVec2f &textureDimensions, bool normalize){
+    if(normalize){
+        // assume current texCoords are denormalized (pixel-based, not percentage-based)
+        // and convert to normalized texCoords
+        for(int i=0; i<mesh.getNumVertices(); i++){
+            ofVec2f texCoord = mesh.getTexCoord(i);
+            texCoord.x /= textureDimensions.x;
+            texCoord.y = -(texCoord.y / textureDimensions.y) + 1.0;
+            mesh.setTexCoord(i, texCoord);
+        }
+
+        return;
+    }
+
+    // assumes current texCoord are normalized (percentage-based),
+    // and denormalizes them (make them pixel-based)
+    for(int i=0; i<mesh.getNumVertices(); i++){
+        ofVec2f texCoord = mesh.getTexCoord(i);
+        texCoord.x *= textureDimensions.x;
+        texCoord.y = (1.0 - texCoord.y) * textureDimensions.y;
+        mesh.setTexCoord(i, texCoord);
     }
 }
 

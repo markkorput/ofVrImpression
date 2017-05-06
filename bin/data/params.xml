@@ -4,5 +4,6 @@
 	<log-level/>
 	<params-file>params.xml</params-file>
 	<texture-path>sailboat.jpg</texture-path>
+    <operations-launcher-key>`</operations-launcher-key>
 <ofVrImpression/>
 </ofVrImpression>
