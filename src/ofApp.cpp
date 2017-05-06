@@ -57,6 +57,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 bool ofApp::loadImage(const string& path){
     ofLog() << "loading image: " << path;
+
     bool bPrevious = false;
     ofVec2f previousDimensions;
 
@@ -71,6 +72,9 @@ bool ofApp::loadImage(const string& path){
         ofLogWarning() << "failed to load image: " << path;
         return false;
     }
+
+    if(image.getWidth() / image.getHeight() != 2.0f)
+        ofLogWarning() << "image does not have a 2:1 aspect ratio which is necessary for proper equirectangular mapping";
 
     if(bPrevious){
         // normalize; undo denormalization for previous image's texture
