@@ -1,4 +1,5 @@
 PROJECT_CFLAGS = -Wno-undefined-var-template # -Wno-overloaded-virtual -Wno-reorder
+PROJECT_DEFINES = OFXBOOTSTRAP_OFXOPERATIONS
 
 ################################################################################
 # CONFIGURE PROJECT MAKEFILE (optional)
