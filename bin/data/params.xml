@@ -6,4 +6,6 @@
 	<texture-path>sailboat.jpg</texture-path>
     <operations-launcher-key>`</operations-launcher-key>
 <ofVrImpression/>
+    <oculus-enabled>0</oculus-enabled>
+	<easy-cam-enabled>1</easy-cam-enabled>
 </ofVrImpression>

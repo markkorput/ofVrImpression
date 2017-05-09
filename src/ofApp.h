@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxBootstrApp.h"
+#include "ofxOculusDK2.h"
 
 class ofApp : public ofxBootstrApp::App {
 
@@ -13,6 +14,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
 
 private:
+
+    void drawScene();
+
     //! loads the specified image and makes sure sphereMesh gets updated if necessary
     bool loadImage(const string& path);
 
@@ -21,10 +25,12 @@ private:
 
 private:
     ofParameter<string> imagePathParam;
+    ofParameter<bool> oculusEnabledParam, easyCamEnabledParam;
 
     ofImage image;
     ofTexture* texture;
     ofMesh sphereMesh;
     // ofCamera cam;
     ofEasyCam cam;
+    ofxOculusDK2 oculusDK2;
 };

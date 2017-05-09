@@ -24,16 +24,47 @@ void ofApp::setupParameters(){
     ofxBootstrApp::App::setupParameters();
     parameters.setName("ofVrImpression");
     parameters.add(imagePathParam.set("texture-path", "data/texture.jpg"));
+    parameters.add(oculusEnabledParam.set("oculus-enabled", false));
+    parameters.add(easyCamEnabledParam.set("easy-cam-enabled", true));
 }
 
 void ofApp::update(){
-    cam.setPosition(0,0,0);
+    if(easyCamEnabledParam.get())
+        cam.setPosition(0,0,0);
+
+    if(oculusEnabledParam.get()){
+        if(!oculusDK2.isSetup()){
+            oculusDK2.baseCamera = &cam;
+            oculusDK2.setup();
+        }
+    }
 }
 
 void ofApp::draw(){
     ofClear(0);
 
-    cam.begin();
+    if(easyCamEnabledParam.get())
+        cam.begin();
+
+    if(oculusEnabledParam.get() && oculusDK2.isSetup()){
+        oculusDK2.beginLeftEye();
+            drawScene();
+        oculusDK2.endLeftEye();
+
+        oculusDK2.beginRightEye();
+            drawScene();
+        oculusDK2.endRightEye();
+    } else {
+        drawScene();
+    }
+
+    if(easyCamEnabledParam.get())
+        cam.end();
+
+    ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 10);
+}
+
+void ofApp::drawScene(){
     if(texture){
         ofSetColor(255);
         texture->bind();
@@ -43,9 +74,6 @@ void ofApp::draw(){
         ofSetColor(255,0,0);
         sphereMesh.drawWireframe();
     }
-    cam.end();
-
-    ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 10, 10);
 }
 
 void ofApp::dragEvent(ofDragInfo dragInfo){
